@@ -127,14 +127,13 @@ def plot_distribution_anfangszeit_stoppzeit():
 def distribution_avg_fz():
     df = z.get_time_df()
     df = df.Fahrzeit.values.tolist()
-    length = len(df)
-    for i in range(length):
+    new_df = []
+    for i in range(len(df)):
         df[i] = round(time_to_number(df[i]), 2)
-        if df[i] == 0.0:
-            del df[i]
-            i -= 1
-    print(df)
+        # if df[i] != 0.0:
+          #  new_df.append(df[i])
 
+    # df = new_df
     fig = ff.create_distplot(hist_data=[df],
                              group_labels=["Fahrzeit Distribution"],
                              bin_size=[0.1])
@@ -142,9 +141,18 @@ def distribution_avg_fz():
         title="Distribution of Fahrzeit",
     )
 
-    std = np.std(df)
-    print(std)
-    fig.add_shape(type="line", x0=std, x1=std, y0=0, y1=0.5, xref='x', yref='y',
+    mean = np.mean(df)
+    std_plus = mean + np.std(df)
+    std_minus = mean + np.std(df) * -1
+
+    print("Mean: ", mean)
+    print("Standard Deviation: ", std_plus - mean)
+
+    fig.add_shape(type="line", x0=mean, x1=mean, y0=0, y1=0.5, xref='x', yref='y',
+                  line=dict(color='blue', dash='dot'))
+    fig.add_shape(type="line", x0=std_plus, x1=std_plus, y0=0, y1=0.5, xref='x', yref='y',
+                  line=dict(color='red', dash='dash'))
+    fig.add_shape(type="line", x0=std_minus, x1=std_minus, y0=0, y1=0.5, xref='x', yref='y',
                   line=dict(color='red', dash='dash'))
     fig.show()
 
